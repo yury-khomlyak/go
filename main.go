@@ -91,16 +91,29 @@ const (
 	Death
 )
 
+
+func whatToDo(hive *Hive) map[int]int {
+	actions := make(map[int]int)
+
+	// Just random actions with random direction
+	rand.Seed(time.Now().UnixNano())
+	for id := range hive.Ants {
+		actions[id] = rand.Intn(5)*10 + rand.Intn(4)
+	}
+
+	return actions
+}
+
 func main() {
 	fmt.Println("let's ant")
-	http.HandleFunc("/", randomMoves)
+	http.HandleFunc("/", handler)
 	err := http.ListenAndServe(":7777", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
 
-func randomMoves(w http.ResponseWriter, r *http.Request) {
+func handler(w http.ResponseWriter, r *http.Request) {
 	data, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -121,15 +134,10 @@ func randomMoves(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rand.Seed(time.Now().UnixNano())
-	ants := make(map[int]int)
-	for id := range hive.Ants {
-		ants[id] = rand.Intn(5)*10 + rand.Intn(4)
-	}
+	actions := whatToDo(&hive)
+	fmt.Println(actions)
 
-	fmt.Println(ants)
-
-	output, err := json.Marshal(ants)
+	output, err := json.Marshal(actions)
 	if err != nil {
 		http.Error(w, err.Error(), 504)
 		return
