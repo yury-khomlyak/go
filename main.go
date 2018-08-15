@@ -107,7 +107,7 @@ func whatToDo(hive *Hive) map[int]int {
 func main() {
 	fmt.Println("let's ant")
 	http.HandleFunc("/", handler)
-	err := http.ListenAndServe(":7777", nil)
+	err := http.ListenAndServe(":7070", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
