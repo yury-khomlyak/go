@@ -1,14 +1,34 @@
 package main
 
 import (
+	"math/rand"
+	"time"
+	"net/http"
+	"log"
+	"io/ioutil"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"math/rand"
-	"net/http"
-	"time"
 )
+
+func main() {
+	StartServer()
+}
+
+func whatToDo(hive *Hive) ActDir {
+	actions := make(ActDir)
+	rand.Seed(time.Now().UnixNano())
+
+	for id := range hive.Ants {
+		//            Random Action     Random direction
+		actions[id] = rand.Intn(5)*10 + rand.Intn(4)
+	}
+
+	//time.Sleep(20 * time.Millisecond)
+
+	return actions
+}
+
+////////// DO NOT ALTER AFTER THIS LINE /////////
 
 type Action int
 
@@ -91,23 +111,11 @@ const (
 	Death
 )
 
+type ActDir map[int]int
 
-func whatToDo(hive *Hive) map[int]int {
-	actions := make(map[int]int)
-
-	// Just random actions with random direction
-	rand.Seed(time.Now().UnixNano())
-	for id := range hive.Ants {
-		actions[id] = rand.Intn(5)*10 + rand.Intn(4)
-	}
-
-	return actions
-}
-
-func main() {
-	fmt.Println("let's ant")
+func StartServer(){
 	http.HandleFunc("/", handler)
-	err := http.ListenAndServe(":7777", nil)
+	err := http.ListenAndServe(":7070", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
