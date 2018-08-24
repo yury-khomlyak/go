@@ -1,13 +1,20 @@
-# Sample AntHive bot in Go language
+# Sample AntHive bot - *Golang*
 
-# Setup
+## Setup
 `go get github.com/anthive/go`
 
-# Run
-`go run $GOPATH/src/github.com/anthive/go/main.go`
+## Build
+From project root
+`go build`
 
-# Use
-## Clone
-## Replace logic in whatToDo(hive *Hive) map[int]int
-## Push to your repo with Tag
-## Enable it at https://profile.anthive.io/
+## Run
+From project root
+`./go`
+
+# Participating at AntHive.IO
+- Folk/Clone sample bot
+- Replace logic of *whatToDo(hive Hive) map[int]int*
+- Set your *username* and *lang* in ANTHIVE file
+- Push your code.
+- Link your repo at https://profile.anthive.io/
+- Watch domination of your colony :)
