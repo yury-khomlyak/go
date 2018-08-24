@@ -38,7 +38,6 @@ func whatToDo(hive *Hive) ActDir {
 		actions[id] = int(action)*10 + int(direction)
 	}
 
-	time.Sleep(100 * time.Millisecond)
 
 	return actions
 }
