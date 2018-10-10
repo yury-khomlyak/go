@@ -1,65 +1,54 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
 	"math/rand"
-	"time"
+	"net/http"
 )
 
+var actions = []string{"move", "eat", "load", "unload"}
+var directions = []string{"up", "down", "right", "left"}
+
 func main() {
-	StartServer()
-}
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("content-type", "application/json")
 
-func whatToDo(hive *Hive) ActDir {
-	actions := make(ActDir)
-	rand.Seed(time.Now().UnixNano())
-	for id, ant := range hive.Ants {
+		data, _ := ioutil.ReadAll(r.Body)
+		defer r.Body.Close()
 
-		//Default action if ant don't see Food
-		action := Move
+		//Hive object from request payload
+		var hive Hive
+		json.Unmarshal(data, &hive)
 
-		//Default direction is Random
-		direction := Direction(rand.Intn(4))
-
-		food, hive, dir  := lookAround(ant, hive.Map)
-		if hive && ant.Payload>0{
-			direction = dir
-			action = Unload
-		}else if food{
-			direction = dir
-			if ant.Health<9{action = Eat}
-			if ant.Payload<9 {action = Load}
+		//Loop through ants and give orders
+		orders := make(map[int]Order)
+		for antID, _ := range hive.Ants {
+			orders[antID] = Order{
+				Act: actions[rand.Intn(4)],
+				Dir: directions[rand.Intn(4)],
+			}
 		}
+		response, _ := json.Marshal(orders)
 
-		actions[id] = int(action)*10 + int(direction)
+		log.Println(string(response))
+		w.Write(response)
+		// json format sample:
+		// {"1":{"act":"load","dir":"down"},"17":{"act":"load","dir":"up"}}
+	})
+
+	err := http.ListenAndServe(":7070", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
 	}
-
-	return actions
 }
 
-func lookAround(ant *Ant, world *Map)(food, hive bool, dir Direction){
-
-	if ant.Y > 0 {
-		dir = Up
-		food,hive = iSee(ant.Y-1,ant.X,world)
-	}else if ant.Y < world.Height-1{
-		dir = Down
-		food,hive = iSee(ant.Y+1,ant.X,world)
-	}else if ant.X < world.Width-1{
-		dir = Right
-		food,hive = iSee(ant.Y,ant.X+1,world)
-	}else if ant.X >0{
-		dir = Left
-		food,hive = iSee(ant.Y,ant.X-1,world)
-	}
-	return
+type Hive struct {
+	Ants map[int]*json.RawMessage
 }
 
-func iSee(y,x uint8, world *Map) (food, hive bool) {
-	if world.Cells[y][x].Food>0{
-		food = true
-	}
-	if world.Cells[y][x].CellType > 2{
-		hive = true
-	}
-	return
+type Order struct {
+	Act string `json:"act"`
+	Dir string `json:"dir"`
 }

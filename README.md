@@ -1,20 +1,30 @@
-# Sample AntHive bot - *Golang*
+# AntHive.IO sample bot in Go
 
-## Setup
-`go get github.com/anthive/go`
+## Requirements
+- golang ^1.8
+- Clone https://github.com/anthive/go.git
+- Push to your Github account.
+- Do not push your code to sample bot repo.
+- Signup at https://profile.anthive.io/
+- Set your username in [ANTHIVE](ANTHIVE) file
 
-## Build
-From project root
-`go build`
+## Run locally
+```
+go run main.go
+```
+It will start localhost server on port :7070 **Do not change port**
 
-## Run
-From project root
-`./go`
+## Test with sample call
+```
+curl -X 'POST' -d @payload.json http://localhost:7070
+```
 
-# Participating at AntHive.IO
-- Folk/Clone sample bot
-- Replace logic of *whatToDo(hive Hive) map[int]int*
-- Set your *username* and *lang* in ANTHIVE file
-- Push your code.
-- Link your repo at https://profile.anthive.io/
-- Watch domination of your colony :)
+## Debug and Sandbox
+- git push
+- Go to [Profile](https://profile.anthive.io/)
+- Queue the game
+
+## Coming Soon: *Ranked games and ML*
+- Go to [Profile](https://profile.anthive.io/)
+- Enable Career
+- [Leaderboard](https://anthive.io/liaderboard)
